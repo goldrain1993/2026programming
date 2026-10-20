@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NEPAL FLOOD · SYSTEM REPAIR 체험판 v0.4</title>
+<style>
+:root{--g:#a0e24a;--bg:#071008;--fg:#ebf4e8;--muted:#92a68c;--line:#2a4527}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--fg);font-family:Pretendard,'Malgun Gothic',sans-serif}button,input,select{font:inherit}button{cursor:pointer}a{color:#b4ed85;text-decoration:none}.layout{display:grid;grid-template-columns:minmax(0,1fr) 370px;min-height:100vh}.world{height:100vh;position:relative;overflow:hidden;background:radial-gradient(circle at 40% 25%,#284b2e,#071008 80%)}#view3d{width:100%;height:100%;display:block}.hud{position:absolute;top:20px;left:22px;display:flex;gap:8px;flex-wrap:wrap}.hud>div{border:1px solid #607f4a88;background:#071008cf;backdrop-filter:blur(8px);border-radius:12px;padding:11px 13px}.hud strong{display:block;font-size:12px;color:#b8ec8d}.hud small{display:block;color:#9cb397;font-size:11px;margin-top:3px}.map-note{position:absolute;bottom:22px;left:22px;background:#091407dc;border:1px solid #4a683a;padding:12px;border-radius:12px;font-size:12px;color:#b8c9b1}.side{border-left:1px solid var(--line);background:#09130b;padding:21px 17px;overflow:auto;max-height:100vh}.kicker{color:#9ed658;letter-spacing:.17em;font-size:11px;font-weight:1000}.headline{font-weight:1000;font-size:27px;line-height:1.05;margin:10px 0}.sub{line-height:1.65;font-size:12px;color:#91a78f}.badge{display:inline-block;background:#283d20;border:1px solid #69865f;color:#cbedaa;padding:5px 8px;border-radius:50px;font-size:10px;font-weight:800}.card{border:1px solid #33482a;background:#101d0f;border-radius:13px;margin-top:13px;padding:14px}.card-title{font-weight:950;font-size:13px;color:#d1f4b8;margin-bottom:12px}.sensor{display:flex;justify-content:space-between;gap:6px;font-size:12px;margin:11px 0}.sensor b{font-size:11px;color:#a4c99b}.big{min-height:45px;border:0;background:#94d73d;color:#122005;font-weight:1000;border-radius:10px;width:100%;margin-top:9px}.secondary{min-height:39px;border:1px solid #688957;background:#15280d;color:#e5f9db;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:900;width:100%;margin-top:7px}.results{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.metric{background:#071007;padding:10px;border:1px solid #273d24;border-radius:9px}.metric small{font-size:10px;color:#92ad86}.metric b{display:block;font-size:19px;margin-top:5px}.progress{height:8px;border-radius:5px;background:#223420;overflow:hidden}.progress>div{height:100%;background:#a7e65c;width:0%;transition:width .18s}.pill{color:#f7db8b}.notice{font-size:11px;line-height:1.7;color:#aabb9d;border-left:3px solid #7eb749;padding-left:10px}.flex{display:flex;justify-content:space-between;align-items:center}.select{background:#071207;border:1px solid #527340;color:#eef9e8;min-height:30px;border-radius:6px}.blip{height:8px;width:8px;display:inline-block;background:#7de551;border-radius:50%;margin-right:5px;box-shadow:0 0 13px #8fda50}@media(max-width:880px){.layout{grid-template-columns:1fr}.world{height:50vh}.side{max-height:none}.hud{top:10px;left:10px}.map-note{bottom:10px;left:10px}}
+</style>
+</head>
+<body>
+<div class="layout"><div class="world"><canvas id="view3d"></canvas><div class="hud"><div><strong>NEPAL FLOOD · DIGITAL TWIN</strong><small>상류 빙하 · 빙하호 · 마을 · 경보 장치</small></div><div><strong id="mapState">DESIGN MODE</strong><small id="mapStateText">재난 경보 알고리즘을 복구하세요</small></div></div><div class="map-note"><span class="blip"></span> 독립 시험판 · 실제 원본 3D 엔진은 저장소에 연결하면 그대로 사용됩니다.</div></div>
+<aside class="side"><div class="kicker">DATA DISASTER MISSION / BUILD 0.4</div><div class="headline">NEPAL FLOOD<br><span style="color:#a7e85d">SYSTEM REPAIR</span></div><p class="sub">마을을 구하는 자동 경보 장치가 고장 났습니다. 블록 프로그램을 작성하고 위험 감지 시스템을 복구하세요.</p><span class="badge">5개 개발 미션</span> <span class="badge">블록 코딩</span> <span class="badge">실행 결과 검증</span>
+<div class="card"><div class="card-title">⚙ 경보 시스템 설정 · 시험 데이터</div><div class="sensor"><span>진동 센서 (A)</span><b>위험 기준 5.0</b></div><div class="sensor"><span>수위 센서 (B)</span><b>위험 기준 5.0</b></div><div class="sensor"><span>유속 센서 (C)</span><b>위험 기준 5.0</b></div><div class="sensor" style="align-items:center"><span>재난 유형</span><select id="scenarioMode" class="select"><option value="time">시간차로 발생하는 홍수</option><option value="fast">급속 홍수</option><option value="safe">홍수 없음</option><option value="false">아슬아슬한 상황</option></select></div><button id="startTrial" class="secondary">▶ 1회 재난 검증</button><button id="openCode" class="big">🔧 개발자 모드 열기</button></div>
+<div class="card"><div class="card-title">📊 모의 시험 결과</div><div class="flex" style="font-size:11px;color:#a9c8a0;margin-bottom:9px"><span>시뮬레이션 진행</span><span id="clock">T+00분</span></div><div class="progress"><div id="bar"></div></div><div class="results"><div class="metric"><small>경보 상태</small><b id="alarmState">대기</b></div><div class="metric"><small>센서 최대값</small><b id="peak">0.0</b></div><div class="metric"><small>경보 시점</small><b id="alarmTime">—</b></div><div class="metric"><small>판정</small><b id="result">검증 대기</b></div></div><p class="notice" id="resultNote">실제 미션은 개발자 모드에서 진행됩니다. 마지막 미션을 통과하면 완성한 경보 알고리즘을 여기에 적용할 수 있습니다.</p></div><p class="sub">이 파일은 <b>코딩 및 기능 체험용 시험판</b>입니다. 원본 프로젝트에 설치하면 기존 3D 지형과 100회 형성평가에서 학생 코드로 경보를 판단합니다.</p></aside></div>
+<script>
+'use strict';
+const canvas=document.getElementById('view3d'),ctx=canvas.getContext('2d');let water=0,move=0;let testStatus=0;
+const niceNum=x=>String(Math.round(x*10)/10);
+function renderWorld(){
+ const w=canvas.width=canvas.clientWidth*devicePixelRatio,h=canvas.height=canvas.clientHeight*devicePixelRatio;
+ const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#163128');g.addColorStop(.5,'#193421');g.addColorStop(1,'#041508');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+ ctx.save();ctx.translate(w*.53,h*.57);ctx.scale(Math.min(w/1100,h/710),Math.min(w/1100,h/710));ctx.rotate(-.035);
+ function poly(pts,fill,stroke){ctx.beginPath();pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke()}}
+ // distant alpine peaks
+ poly([[-560,-190],[-450,-445],[-340,-255],[-250,-395],[-90,-235],[80,-350],[170,-170],[560,-190],[560,200],[-560,200]],'#355c42','#557a57');
+ poly([[-480,-365],[-450,-445],[-417,-367]],'#d5e4d9');poly([[-300,-332],[-250,-395],[-205,-330]],'#b6d4cd');poly([[35,-286],[80,-350],[122,-281]],'#cedfdb');
+ poly([[-560,-50],[-355,-130],[-155,0],[70,-97],[355,-26],[560,30],[560,340],[-560,340]],'#30563a');
+ poly([[-560,40],[-290,-75],[-160,75],[80,-10],[390,100],[560,115],[560,360],[-560,360]],'#447047');
+ poly([[-560,170],[-310,60],[-200,155],[30,85],[260,166],[560,110],[560,360],[-560,360]],'#527c48');
+ // river ribbons
+ ctx.save();ctx.beginPath();ctx.moveTo(-250,-100);ctx.bezierCurveTo(-140,-55,-210,45,-55,110);ctx.bezierCurveTo(55,145,20,185,210,240);ctx.bezierCurveTo(300,260,390,320,560,370);ctx.lineCap='round';ctx.lineWidth=23+water*19;ctx.strokeStyle='#103344';ctx.stroke();ctx.lineWidth=13+water*17;ctx.strokeStyle=water>.4?'#a58b5a':'#5bb2be';ctx.stroke();ctx.lineWidth=4;ctx.strokeStyle=water>.4?'#d1a46e':'#a0e3dc';ctx.stroke();ctx.restore();
+ // bridge
+ poly([[120,189],[180,196],[195,207],[133,202]],'#928878','#c1b29b');
+ function house(x,y,s){poly([[x,y],[x+s,y-8],[x+s,y-s-8],[x,y-s]],'#c2a68c');poly([[x-5,y-s],[x+s/2,y-s-19],[x+s+4,y-s-8],[x+s/2,y-s+1]],'#7f352c');poly([[x+s/2,y-s+1],[x+s+4,y-s-8],[x+s,y-s+2],[x,y-s+7]],'#733e2d')}
+ for(let j=0;j<15;j++){const x=220+(j%5)*58,y=90+Math.floor(j/5)*59;house(x,y,23+(j%2)*5)}
+ for(const [x,y,label] of [[-285,-175,'A · 빙하'],[-160,-60,'B · 빙하호'],[-10,100,'C · 협곡'],[250,30,'G · 마을']]){
+  ctx.beginPath();ctx.arc(x,y,8,0,Math.PI*2);ctx.fillStyle='#c5f379';ctx.fill();ctx.strokeStyle='#19390d';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#e5fada';ctx.font='bold 15px Arial';ctx.fillText(label,x+13,y-12)}
+ if(water>.36){ctx.globalAlpha=.12+water*.24;poly([[-150,35],[-35,67],[95,120],[200,158],[360,190],[560,270],[560,350],[-150,250]],'#d6ad6d');ctx.globalAlpha=1}
+ ctx.restore();
+ // vignette
+ const vig=ctx.createRadialGradient(w*.5,h*.47,50,w*.5,h*.5,w*.65);vig.addColorStop(0,'#0000');vig.addColorStop(1,'#020802b8');ctx.fillStyle=vig;ctx.fillRect(0,0,w,h);
+}
+window.addEventListener('resize',renderWorld);renderWorld();
+const modes={
+ time:{danger:true,readings:[[2,2,1],[2,7,2],[6,3,3],[7,3,6],[2,6,2],[2,2,2]],arrival:5},
+ fast:{danger:true,readings:[[2,2,1],[7,6,6],[8,8,8],[9,9,9]],arrival:3},
+ safe:{danger:false,readings:[[1,2,3],[2,3,3],[3,2,3],[1,3,2],[2,2,1]],arrival:null},
+ false:{danger:false,readings:[[2,3,2],[7,2,2],[2,2,2],[2,6,2],[2,2,2]],arrival:null}
+};
+function runPreview(){
+ const mode=modes[document.getElementById('scenarioMode').value],steps=mode.readings;
+ const program=window.NepalSystemRepair.getState().work[4];
+ const decisions=[];for(let i=0;i<steps.length;i++){try{decisions.push(window.NepalSystemRepair.simulate(program,steps.slice(0,i+1),[5,5,5],['ge','ge','ge']).alarm)}catch(_){decisions.push(false)}}
+ document.getElementById('startTrial').disabled=true;let idx=0;
+ const clock=document.getElementById('clock'),bar=document.getElementById('bar'),alarmState=document.getElementById('alarmState'),alarmTime=document.getElementById('alarmTime'),result=document.getElementById('result');
+ alarmState.textContent='대기';alarmTime.textContent='—';result.textContent='검증 중';document.getElementById('resultNote').textContent='학생 알고리즘에 같은 센서 데이터가 순서대로 전달됩니다.';
+ function tick(){const readings=steps[idx],alarmIndex=decisions.indexOf(true);clock.textContent='T+'+String(idx*4).padStart(2,'0')+'분';bar.style.width=(idx+1)/steps.length*100+'%';document.getElementById('peak').textContent=niceNum(Math.max(...readings));water=mode.danger?Math.max(0,(idx-1)/Math.max(1,steps.length-2)):0;renderWorld();
+   document.getElementById('mapState').textContent=water>.25?'FLOOD WATCH':'SENSOR ONLINE';document.getElementById('mapStateText').textContent=mode.danger?'홍수 시나리오 진행 중':'위험하지 않은 시나리오';
+   if(decisions[idx]){alarmState.textContent='🚨 발령';alarmState.style.color='#ffc082';alarmTime.textContent='T+'+String(alarmIndex*4)+'분'}else{alarmState.textContent='대기';alarmState.style.color='#d7e8d2'}
+   if(++idx<steps.length){setTimeout(tick,500);return}
+   const alarm=alarmIndex!==-1;const success=mode.danger?alarm&&!((alarmIndex+1)>=mode.arrival):!alarm;
+   result.textContent=success?'정상 작동':(mode.danger?'대피 실패':'불필요 경보');result.style.color=success?'#9fed71':'#ffac91';document.getElementById('startTrial').disabled=false;
+   document.getElementById('resultNote').textContent=success?'이번 시나리오의 경보 판단이 적절했습니다. 다른 재난 유형에서도 확인해 보세요.':'왜 이런 결과가 나왔을까요? 프로그램의 조건과 반복문을 수정한 뒤 다시 검사하세요.';
+ }
+ tick();
+}
+document.getElementById('startTrial').addEventListener('click',runPreview);
+document.getElementById('openCode').addEventListener('click',()=>window.NepalSystemRepair.open());
+</script>
+<script>
+/*
+ * NEPAL FLOOD : SYSTEM REPAIR / v0.4
+ * Self-contained educational block-editor addon for goldrain1993/nepal.
+ * No eval, no Blockly CDN, no network dependency, no change to the existing disaster engine.
+ * Integrate by adding <script src="system_repair.js"><\/script> immediately before </body>
+ * in the original index.html, AFTER its existing application script.
+ */
+(function(){
+'use strict';
+if(window.__NEPAL_REPAIR_LOADED__)return;
+window.__NEPAL_REPAIR_LOADED__=true;
+const $=sel=>document.querySelector(sel);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const variableNames=['기록값','감지여부','감지개수','경보상태'];
+function allVariableNames(){return [...new Set([...variableNames,...state.customVars])]}
+function valOptions(){return [
+ ['0','숫자 0'],['1','숫자 1'],['2','숫자 2'],['3','숫자 3'],['4','숫자 4'],['5','숫자 5'],
+ ['reading','센서값목록의 (반복번호)번째 값'],['limit','위험기준목록의 (반복번호)번째 값'],
+ ['index','반복번호 (1부터)'],['total','센서값목록의 크기'],
+ ['configured','현재 센서가 위험하면 1, 아니면 0'],
+ ...allVariableNames().map(v=>['var:'+v,'변수 '+v])
+]}
+function mission1Options(){return [['0','숫자 0'],['currentReading','현재센서값']]}
+function mission2Options(){return [['0','값 선택'],['sensor1','수위 센서의 측정값'],['sensor2','유속 센서의 측정값'],['sensor3','진동 센서의 측정값']]}
+const comparisons=[['ge','≥ 크거나 같다'],['gt','> 크다'],['le','≤ 작거나 같다'],['lt','< 작다'],['eq','= 같다'],['ne','≠ 다르다']];
+const types=[
+ ['set','변수 정하기','data'],['add','변수 증가시키기','data'],['if','만약 ~ 이라면','logic'],
+ ['loop','리스트 크기만큼 반복하기','loop'],['append','리스트에 값 추가하기','mem'],['alarm','대피 경보 발령','alarm']
+];
+const tasks=[
+ {title:'센서 데이터 복구',tag:'변수',fault:'수위 센서가 고장 났습니다!',diagnostic:'SENSOR MEMORY ERROR',desc:'센서가 값을 측정하기까지는 성공했지만, 값을 기억하는 프로그램이 삭제되어 측정값을 저장하지 못합니다.',mission:'「수위센서값」 변수를 만들고, 센서가 측정한 값을 변수에 저장하는 부분을 여러분이 다시 만들어서 센서가 측정한 값을 계속 기억하도록 고쳐보세요.',target:'검사: 수위센서값 변수에 현재 수위 센서의 측정값이 정확히 저장되어야 합니다.',tips:'먼저 「수위센서값」 변수를 만든 후, 변수 정하기 블록을 끌어와 측정값을 저장하세요.'},
+ {title:'센서 목록 복구',tag:'리스트',fault:'센서값 저장 목록이 고장 났습니다!',diagnostic:'SENSOR LIST ERROR',desc:'수위·유속·진동 센서가 각각 측정한 값이 있지만, 여러 값을 순서대로 모아 저장할 목록이 사라졌습니다.',mission:'「센서값목록」 리스트를 직접 만들고, 수위 센서값 → 유속 센서값 → 진동 센서값 순서로 리스트에 추가해 저장하세요. 이번 미션에서는 반복번호를 사용하지 않습니다.',target:'검사: 센서값목록에 3개의 센서값이 정확한 순서로 저장되어야 합니다.',tips:'리스트 만들기 → 「리스트에 값 추가하기」 블록 3개를 차례대로 연결 → 각각 수위·유속·진동 센서의 측정값 선택.'},
+ {title:'다중 센서 복구',tag:'반복문 · 조건문',fault:'다중 센서 검사 장치가 고장 났습니다!',diagnostic:'SENSOR SCANNER OFFLINE',desc:'2번 미션에서 센서값을 리스트에 순서대로 저장하는 법을 배웠습니다. 이제 여러 센서를 하나씩 검사하고 위험한 센서 개수를 세어야 합니다.',mission:'반복번호는 1부터 시작하여 반복할 때마다 1씩 커집니다. 「센서값목록의 크기」만큼 반복하면서 「반복번호번째 센서값」과 「반복번호번째 위험기준」을 비교하고, 위험할 때마다 「감지개수」를 1 증가시키세요.',target:'검사: 센서가 1~4개일 때 위험 센서 개수를 모두 정확히 셀 수 있어야 합니다.',tips:'감지개수=0 → 목록의 크기만큼 반복 → 반복번호번째 센서값과 위험기준 비교 → 위험하면 감지개수 +1.'},
+ {title:'자동 경보 복구',tag:'조건문 · 변수',fault:'자동 대피 경보 장치가 고장 났습니다!',diagnostic:'AUTO ALARM OFFLINE',desc:'위험한 센서가 몇 개인지 계산하는 기능은 복구되었지만, 그 결과를 이용해 대피 경보를 발령하는 프로그램이 사라졌습니다.',mission:'리스트를 반복 검사해 구한 「감지개수」가 2 이상일 때 「대피 경보 발령하기」가 실행되도록 조건문을 완성하세요.',target:'검사: 같은 시점에 위험한 센서가 2개 이상이면 경보를 발령하고, 그렇지 않으면 발령하지 않아야 합니다.',tips:'3번과 같이 감지개수를 세고 → 만약 감지개수 ≥ 2 이라면 → 대피 경보 발령하기.'},
+ {title:'전체 시스템 통합',tag:'시험 · 개선',fault:'최종 경보 시스템 연결이 끊겼습니다!',diagnostic:'MAIN CONTROLLER DISCONNECTED',desc:'센서 목록과 경보 판단 기능을 연결하고 다양한 홍수·비홍수 상황에서 코드가 정확히 작동하는지 확인해야 합니다.',mission:'완성한 감지·반복·경보 코드를 통합하여 정상·위험·시간차 시험을 통과하세요. 검증 후 원본 시뮬레이션에 연결하세요.',target:'검사: 센서 개수가 달라져도 같은 시점에 위험 센서 2개 이상이면 경보를 발령해야 합니다.',tips:'4번 알고리즘 가져오기를 사용한 다음, 테스트를 실행해 잘못된 경보가 있는지 확인하세요.'}
+];
+let nextId=1;
+const node=(type,extra={})=>({id:nextId++,type,...(
+ type==='set'?{target:'기록값',value:'0'}:
+ type==='add'?{target:'감지개수',value:'1'}:
+ type==='append'?{list:'센서값목록',value:'0'}:
+ type==='if'?{left:'reading',op:'ge',right:'limit',body:[]}:
+ type==='loop'?{body:[]}:{}) ,...extra});
+function template(n){
+ if(n===0)return [];
+ if(n===1)return []; // 미션 2는 교사가 목록을 미리 만들지 않음
+ if(n===2)return [node('set',{target:'감지개수',value:'0'}),node('loop',{body:[]})];
+ // 미션 4·5는 이미 복구된 센서 집계 코드를 제공하고 경보 조건은 학생이 완성함
+ if(n===3||n===4)return [
+  node('set',{target:'감지개수',value:'0'}),
+  node('loop',{body:[node('if',{left:'reading',op:'ge',right:'limit',body:[node('add',{target:'감지개수',value:'1'})]})]}),
+  node('if',{left:'var:감지개수',op:'ge',right:'2',body:[]})
+ ];
+ return [];
+}
+let state={task:0,work:tasks.map((_,n)=>template(n)),passed:[false,false,false,false,false],grades:{},customVars:[],customLists:[],selected:null,active:false,team:'',note:'',testLog:[]};
+try{
+ // v0.4의 학습 순서는 새로 설계되었으므로 이전 버전의 학습 기록은 자동 불러오지 않음.
+ // 학생이 v0.3에서 만든 변수가 미션 1에 생성 완료로 표시되던 버그를 방지.
+ const raw=localStorage.getItem('nepal_repair_project_v4');
+ if(raw){const old=JSON.parse(raw);if(old&&Array.isArray(old.work)&&old.work.length===5){
+  state={...state,work:old.work,passed:Array.isArray(old.passed)?old.passed:state.passed,grades:old.grades||{},customVars:Array.isArray(old.customVars)?old.customVars.filter(v=>typeof v==='string'&&/^[가-힣A-Za-z_][가-힣A-Za-z0-9_]{0,19}$/.test(v)).slice(0,30):[],customLists:Array.isArray(old.customLists)?old.customLists.filter(v=>v==='센서값목록'):[],team:String(old.team||''),note:String(old.note||'')};
+  let max=0;const scan=nodes=>nodes.forEach(n=>{max=Math.max(max,Number(n.id)||0);if(Array.isArray(n.body))scan(n.body)});state.work.forEach(scan);nextId=Math.max(nextId,max+1);
+ }}
+}catch(_){ }
+function persist(){try{localStorage.setItem('nepal_repair_project_v4',JSON.stringify({work:state.work,passed:state.passed,grades:state.grades,customVars:state.customVars,customLists:state.customLists,team:state.team,note:state.note}));}catch(_){}}
+function all(nodes,predicate){return nodes.some(n=>predicate(n)||(Array.isArray(n.body)&&all(n.body,predicate)))}
+function value(v,ctx){
+ if(String(v).startsWith('var:'))return Number(ctx.vars[String(v).slice(4)]||0);
+ if(/^\d+$/.test(String(v)))return Number(v);
+ const s=ctx.index;
+ switch(v){
+  case 'currentReading':return Number(ctx.current[0]||0);
+  case 'sensor1':return Number(ctx.current[0]||0);
+  case 'sensor2':return Number(ctx.current[1]||0);
+  case 'sensor3':return Number(ctx.current[2]||0);
+  case 'reading':return Number(ctx.current[s]||0);
+  case 'limit':return Number(ctx.limits[s]||0);
+  case 'index':return s+1;
+  case 'total':return ctx.current.length;
+  case 'configured':return ((ctx.ops[s]||'ge')==='le'?ctx.current[s]<=ctx.limits[s]:ctx.current[s]>=ctx.limits[s])?1:0;
+  default:return 0;
+ }
+}
+function cmp(a,op,b){return op==='ge'?a>=b:op==='gt'?a>b:op==='le'?a<=b:op==='lt'?a<b:op==='eq'?a===b:a!==b}
+function exec(nodes,ctx,depth=0){
+ if(depth>20)throw Error('중첩이 너무 깊습니다.');
+ for(const b of nodes){
+  if(--ctx.budget<0)throw Error('반복 실행 제한을 초과했습니다.');
+  switch(b.type){
+   case 'set':ctx.vars[b.target]=value(b.value,ctx);break;
+   case 'add':ctx.vars[b.target]=Number(ctx.vars[b.target]||0)+value(b.value,ctx);break;
+   case 'append':if(!ctx.lists[b.list])ctx.lists[b.list]=[];ctx.lists[b.list].push(value(b.value,ctx));break;
+   case 'alarm':ctx.alarm=true;break;
+   case 'if':if(cmp(value(b.left,ctx),b.op,value(b.right,ctx)))exec(b.body||[],ctx,depth+1);break;
+   case 'loop':{
+    const prior=ctx.index;
+    for(let k=0;k<ctx.current.length;k++){ctx.index=k;exec(b.body||[],ctx,depth+1)}
+    ctx.index=prior;break;
+   }
+   default:break;
+  }
+ }
+}
+function simulate(program,series,limits,ops){
+ const ctx={vars:Object.fromEntries(allVariableNames().map(v=>[v,0])),lists:{},alarm:false,index:0,current:[],limits,ops,budget:3000};
+ let alarmStep=null;
+ for(let t=0;t<series.length;t++){
+  ctx.current=series[t];ctx.index=0;ctx.budget=3000;
+  exec(program,ctx,0);
+  if(ctx.alarm&&alarmStep===null)alarmStep=t;
+ }
+ return {vars:{...ctx.vars},lists:JSON.parse(JSON.stringify(ctx.lists)),alarm:ctx.alarm,alarmStep};
+}
+const case1=[
+ {series:[[2.4]],limits:[4],expect:2.4},
+ {series:[[8.7]],limits:[5],expect:8.7},
+ {series:[[0.9]],limits:[3],expect:0.9}
+];
+const case2=[
+ {series:[[2.4,7,3]],limits:[5,5,5],expect:[2.4,7,3]},
+ {series:[[8,1.5,0.8]],limits:[5,5,5],expect:[8,1.5,0.8]},
+ {series:[[4.2,5.3,9]],limits:[5,5,5],expect:[4.2,5.3,9]},
+ {series:[[1.1,6,4.9]],limits:[5,5,5],expect:[1.1,6,4.9]}
+];
+const case3=[
+ {series:[[2]],limits:[4],expect:0},
+ {series:[[7]],limits:[4],expect:1},
+ {series:[[2,7,6]],limits:[4,5,6],expect:2},
+ {series:[[8,9,2,3]],limits:[5,5,5,5],expect:2},
+ {series:[[8,9,7,11]],limits:[5,5,5,5],expect:4}
+];
+const case4=[
+ {series:[[6,2],[2,7]],limits:[5,5],expect:0,at:null,label:'다른 시점에 센서 하나씩 위험 (경보 없음)'},
+ {series:[[2,2],[7,2],[2,2]],limits:[5,5],expect:0,at:null,label:'한 센서만 위험'},
+ {series:[[6,7]],limits:[5,5],expect:1,at:0,label:'동시에 2개 위험'},
+ {series:[[2,8,2],[6,7,2]],limits:[5,5,5],expect:1,at:1,label:'2번째 시점에 동시에 2개 위험'},
+ {series:[[1,1,1],[1,1,1]],limits:[5,5,5],expect:0,at:null,label:'모두 정상'}
+];
+const case5=[...case4,
+ {series:[[2,3,4,1],[2,3,4,1],[2,3,4,1]],limits:[5,5,5,5],expect:0,at:null,label:'지속적인 정상 관측'},
+ {series:[[2,8,3],[3,2,7],[7,2,2]],limits:[5,5,5],expect:0,at:null,label:'시간차 분산 감지 (같은 시점 한 센서만 위험)'},
+ {series:[[2,8,2],[2,1,2]],limits:[5,5,5],expect:0,at:null,label:'하나의 고위험 관측'},
+ {series:[[5,5,2]],limits:[5,5,5],expect:1,at:0,label:'임계값과 같은 경우'},
+ {series:[[7,2,1,1],[1,2,8,1]],limits:[6,6,6,6],expect:0,at:null,label:'네 센서 중 시간차로 한 센서씩 위험'},
+ {series:[[7,8,1,1]],limits:[6,6,6,6],expect:1,at:0,label:'네 센서 중 동시에 두 센서 위험'}
+];
+function validateMission(which,program){
+ let cases=which===0?case1:which===1?case2:which===2?case3:which===3?case4:case5;
+ let errors=[],passed=0;
+ const tests={0:state.customVars.includes('수위센서값')&&all(program,n=>n.type==='set'&&n.target==='수위센서값'&&n.value==='currentReading'),
+  1:state.customLists.includes('센서값목록')&&program.filter(n=>n.type==='append'&&n.list==='센서값목록').length>=3,
+  2:all(program,n=>n.type==='loop')&&all(program,n=>n.type==='if')&&all(program,n=>n.type==='add'),
+  3:all(program,n=>n.type==='loop')&&all(program,n=>n.type==='if')&&all(program,n=>n.type==='add')&&all(program,n=>n.type==='alarm'),
+  4:all(program,n=>n.type==='loop')&&all(program,n=>n.type==='if')&&all(program,n=>n.type==='add')&&all(program,n=>n.type==='alarm')};
+ for(let i=0;i<cases.length;i++){
+  const c=cases[i];let got,ok=false;
+  try{
+   const result=simulate(program,c.series,c.limits,c.ops||[]);
+   got=which===0?result.vars['수위센서값']:which===1?result.lists['센서값목록']:which===2?result.vars['감지개수']:Number(result.alarm);
+   ok=which===1?Array.isArray(got)&&got.length===c.expect.length&&got.every((x,j)=>Math.abs(x-c.expect[j])<0.00001):Math.abs(got-c.expect)<0.00001&&(which<3||result.alarmStep===(c.at===undefined?null:c.at));
+  }catch(e){got=String(e.message||e)}
+  if(ok)passed++;else errors.push(`${c.label||'검사 '+(i+1)}: 예상 ${JSON.stringify(c.expect)} / 실행 ${JSON.stringify(got)}`);
+ }
+ if(which===0&&!state.customVars.includes('수위센서값'))errors.unshift('먼저 「수위센서값」 변수를 직접 만들어야 합니다.');
+ if(which===1&&!state.customLists.includes('센서값목록'))errors.unshift('먼저 「센서값목록」 리스트를 직접 만들어야 합니다.');
+ return {passed,total:cases.length,structure:!!tests[which],errors,success:passed===cases.length&&!!tests[which]};
+}
+function findBlock(id,arr=state.work[state.task],parent=null){for(const n of arr){if(n.id===id)return {item:n,array:arr,parent};if(n.body){const result=findBlock(id,n.body,n);if(result)return result}}return null}
+function options(items,current){return items.map(([v,label])=>`<option value="${esc(v)}"${current===v?' selected':''}>${esc(label)}</option>`).join('')}
+function field(b,key,items){return `<select data-node="${b.id}" data-key="${key}" aria-label="${esc(key)}">${options(items,b[key])}</select>`}
+function snapSlot(parent,index,empty=false){const alarmTarget=empty&&state.task===3&&String(state.work[3][state.work[3].length-1]?.id)===String(parent);return `<div class="sr-snap${empty?' sr-empty':''}${alarmTarget?' sr-priority':''}" data-parent="${parent}" data-index="${index}" aria-label="블록 연결 위치"><span>${alarmTarget?'🚨 여기로 「대피 경보 발령」 블록을 끌어오세요':empty?'여기로 블록을 끌어오세요':'블록 연결'}</span></div>`}
+function blocksHtml(nodes,depth=0,parent='root'){
+ if(depth>12)return '';
+ let out=snapSlot(parent,0,nodes.length===0);
+ nodes.forEach((b,i)=>{
+  const color=b.type==='set'||b.type==='add'?'data':b.type==='loop'?'loop':b.type==='if'?'logic':'alarm';
+  let inside='';
+  if(b.type==='set')inside=`${field(b,'target',state.task===0?[['수위센서값','수위센서값']]:allVariableNames().map(v=>[v,v]))} 을(를) ${field(b,'value',state.task===0?mission1Options():valOptions())} 로 정하기`;
+  if(b.type==='append')inside=`${field(b,'list',[['센서값목록','센서값목록']])} 리스트에 ${field(b,'value',mission2Options())} 추가하기`;
+  if(b.type==='add')inside=`${field(b,'target',allVariableNames().map(v=>[v,v]))} 을(를) ${field(b,'value',valOptions())} 만큼 증가`;
+  if(b.type==='if')inside=`만약 ${field(b,'left',valOptions())} ${field(b,'op',comparisons)} ${field(b,'right',valOptions())} 이라면`;
+  if(b.type==='loop')inside='「센서값목록」의 크기만큼 반복하기';
+  if(b.type==='alarm')inside='🚨 대피 경보 발령하기';
+  out+=`<div class="sr-block sr-${color}" data-block="${b.id}">
+   <div class="sr-block-head" draggable="true" data-drag-block="${b.id}" title="잡아서 끌어 이동"><span class="sr-grip" aria-hidden="true">⠿</span><div class="sr-block-content">${inside}</div><button type="button" class="sr-del" data-act="remove" data-id="${b.id}" title="블록 삭제">×</button></div>
+   ${b.body?`<div class="sr-block-body" data-body="${b.id}">${blocksHtml(b.body,depth+1,String(b.id))}</div>`:''}
+  </div>`;
+  out+=snapSlot(parent,i+1);
+ });
+ return out;
+}
+const css=`
+#sr-launch,#sr-top-launch{font-family:inherit;letter-spacing:.06em}#sr-launch{position:fixed;bottom:20px;left:19px;z-index:41;border:1px solid #a4f04c;background:#132209;color:#dcffb2;border-radius:13px;font-size:13px;box-shadow:0 7px 40px #000a;padding:10px 15px;font-weight:900;cursor:pointer}#sr-top-launch{width:100%;min-height:52px;color:#0d1a09;background:#aeed54;border:0;border-radius:12px;font-size:15px;font-weight:1000;cursor:pointer}
+#sr-app{font-family:Pretendard,'Noto Sans KR','Malgun Gothic',sans-serif;position:fixed;inset:0;z-index:220;pointer-events:none;visibility:hidden;color:#eef6e9}#sr-app.sr-show{visibility:visible}#sr-shade{position:absolute;inset:0;background:#020602a8;pointer-events:auto}#sr-drawer{position:absolute;right:0;top:0;bottom:0;width:min(1040px,78vw);min-width:680px;background:#071008;border-left:1px solid #53732e;box-shadow:-24px 0 70px #000b;display:flex;flex-direction:column;pointer-events:auto;overflow:hidden}#sr-app *{box-sizing:border-box}#sr-app button,#sr-app select,#sr-app input,#sr-app textarea{font:inherit}#sr-app button{cursor:pointer}#sr-app button:disabled{opacity:.4;cursor:not-allowed}#sr-app button:focus-visible,#sr-app select:focus-visible,#sr-app textarea:focus-visible{outline:2px solid #b7ed69}
+.sr-top{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #2e4c20;padding:18px 22px;background:#0d190b}.sr-kicker{font-size:10px;font-weight:1000;color:#a7ef54;letter-spacing:.16em}.sr-top h2{font-size:23px;letter-spacing:.03em;line-height:1.1;margin:4px 0 0}.sr-top small{color:#8fa781;font-size:10px}.sr-actions{display:flex;gap:7px;align-items:center}.sr-btn{border:1px solid #45613a!important;border-radius:10px!important;background:#142310!important;color:#e6f5db!important;padding:10px 12px!important;min-height:39px!important;font-size:12px!important;font-weight:900!important}.sr-btn.primary{background:#a8e65a!important;border:0!important;color:#0a1707!important}.sr-btn.warn{border-color:#e7ba61!important;color:#ffe4b6!important}.sr-x{font-size:18px!important;padding:7px 12px!important}.sr-progress{display:flex;gap:7px;padding:12px 20px 10px;overflow-x:auto;border-bottom:1px solid #21331e}.sr-stage{min-width:0;flex:1;border-radius:12px;border:1px solid #254124;background:#0c190c;padding:11px 8px;text-align:left;color:#96b08b;min-height:70px}.sr-stage.current{border-color:#9bdd52;background:#182d12;color:white;box-shadow:inset 0 0 0 1px #9bdd5244}.sr-stage.passed{border-color:#5e9c44}.sr-stage b{display:block;font-size:15px;color:#9bd55f}.sr-stage span{display:block;font-weight:900;font-size:11px;margin-top:5px}.sr-stage small{font-size:10px;color:#98ae93}.sr-content{overflow:auto;flex:1;padding:16px 20px 30px}.sr-mission{border-radius:12px;padding:13px 16px;background:linear-gradient(110deg,#192d14,#0e1c0d);border:1px solid #375c25;display:flex;justify-content:space-between;align-items:start;gap:16px}.sr-mission h3{font-size:19px;margin:3px 0 5px}.sr-mission p{font-size:12px;line-height:1.65;color:#c3d9bb;margin:0;max-width:710px}.sr-label{font-size:10px;letter-spacing:.13em;color:#b5ed72;font-weight:1000}.sr-mission-num{font-size:35px;line-height:1;font-weight:1000;color:#a4e15d}.sr-zone{display:grid;grid-template-columns:166px minmax(0,1fr);gap:11px;margin-top:12px}.sr-palette,.sr-work{background:#0b180e;border:1px solid #2b472a;border-radius:12px;padding:11px;min-width:0}.sr-pane-title{font-size:12px;font-weight:1000;color:#a7c79a;margin:1px 0 10px}.sr-tool{width:100%;text-align:left;border:1px solid #324633;border-radius:9px;color:white;padding:10px 8px;margin-bottom:7px;font-size:11px;font-weight:800}.sr-tool:before{content:'＋';float:right;opacity:.8}.sr-tool.sr-data{background:#2b5fa4}.sr-tool.sr-logic{background:#3e9856}.sr-tool.sr-loop{background:#b78529;color:#0d1208}.sr-tool.sr-mem{background:#744e9d}.sr-tool.sr-alarm{background:#9b4440}.sr-palette-note{font-size:10px;color:#94a88f;line-height:1.65;margin-top:11px}.sr-work{min-height:320px;padding:13px;background:repeating-linear-gradient(0deg,transparent 0 24px,#18241966 25px),repeating-linear-gradient(90deg,transparent 0 24px,#18241966 25px),#08120b;overflow:auto}.sr-block{border-radius:9px 9px 9px 4px;color:white;margin:5px 0;border:1px solid #ffffff33;box-shadow:0 3px 0 #0007;max-width:100%;overflow:hidden}.sr-block-head{display:flex;justify-content:space-between;align-items:center;padding:7px 7px 7px 10px;gap:6px}.sr-block-content{display:flex;align-items:center;flex-wrap:wrap;gap:4px;line-height:2;font-weight:900;font-size:11px;min-width:0}.sr-block-content select{font-size:11px!important;padding:2px 4px!important;border-radius:6px!important;border:1px solid #ffffff7d!important;color:#161e15!important;background:#fffde8!important;min-height:28px!important;max-width:195px!important}.sr-block-tools{display:flex;gap:3px;flex-shrink:0}.sr-block-tools button{background:#060a082e!important;border:1px solid #fff3!important;border-radius:5px!important;color:white!important;min-width:23px!important;height:25px!important;padding:1px!important;font-size:11px!important}.sr-data{background:#245a9b}.sr-logic{background:#288344}.sr-loop{background:#aa7523}.sr-mem{background:#784896}.sr-alarm{background:#9b3b35}.sr-block-body{margin:0 0 7px 15px;padding:5px 7px 8px 12px;border-left:5px solid #ffffff55;background:#030a085e;border-radius:3px}.sr-drop{width:100%;text-align:left;border:1px dashed #647b53!important;border-radius:8px!important;background:#132113!important;color:#c8e9b8!important;padding:8px!important;font-size:11px!important;min-height:35px!important}.sr-drop.chosen{border-color:#d3ff8e!important;background:#29461f!important}.sr-drop.root{background:#102010!important;margin-top:6px!important}.sr-statusbar{margin-top:12px;border:1px solid #2d452c;background:#0c170e;border-radius:12px;padding:13px 15px}.sr-statusbar h4{margin:0 0 6px;font-size:12px}.sr-statusbar p{margin:0 0 6px;font-size:12px;color:#a7b9a2;line-height:1.55}.sr-testlist{font-size:12px;line-height:1.8;white-space:pre-wrap;color:#c3dec3}.sr-good{color:#a2f078}.sr-bad{color:#ffb0a4}.sr-footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;margin-top:12px}.sr-note{font-size:11px;line-height:1.6;color:#b3cba9}.sr-progress-line{height:5px;background:#263927;overflow:hidden;margin-top:10px;border-radius:10px}.sr-progress-line>div{background:#9fe24b;height:100%;transition:width .25s}.sr-report{margin-top:13px;border:1px solid #273c24;background:#0c190d;padding:13px;border-radius:12px}.sr-report input,.sr-report textarea{border:1px solid #496345!important;background:#071007!important;color:#eaf6e8!important;border-radius:7px!important;padding:8px!important;width:100%;font-size:12px!important}.sr-report textarea{resize:vertical;min-height:74px}.sr-report label{display:block;margin-bottom:6px;font-size:11px;color:#b6c9ad}.sr-report .sr-cols{display:grid;grid-template-columns:1fr 2fr;gap:10px}.sr-indicator{position:absolute;top:8px;right:8px;background:#b9f070;color:#142106;font-weight:1000;z-index:25;border-radius:7px;padding:7px;font-size:10px}.sr-float-toggle{position:fixed;z-index:39;left:20px;bottom:18px;background:#85c83a;color:#081506;padding:12px 16px;border:0;border-radius:10px;font-weight:1000;box-shadow:0 6px 30px #000a;cursor:pointer}#sr-live{position:fixed;bottom:17px;left:20px;z-index:35;padding:9px 13px;border-radius:10px;background:#1c3417;border:1px solid #8bd64c;color:#e7ffd1;font-size:12px;box-shadow:0 3px 24px #000a}#sr-live button{min-height:26px;margin-left:8px;color:#121a0d;background:#b6e981;border:0;border-radius:5px;padding:4px 8px;font-weight:900}
+.sr-mission.sr-alert{border:1px solid #b75140;background:linear-gradient(115deg,#321916 0%,#1d1e10 52%,#0c1c0d 100%);box-shadow:inset 4px 0 0 #f27958,0 7px 32px #090b0826;padding:19px 21px}.sr-alert-title{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:9px 0 12px}.sr-alert-title .sr-alert-icon{font-size:25px;filter:drop-shadow(0 0 8px #ff6e4680)}.sr-mission.sr-alert h3.sr-fault-heading{margin:0!important;color:#ffc28e!important;font-size:clamp(23px,2.8vw,31px)!important;font-weight:1000!important;line-height:1.3!important;letter-spacing:-.04em;text-shadow:0 1px 15px #f36f4933}.sr-alert .sr-fault-body{font-size:14px!important;line-height:1.85!important;color:#f9eee6!important;max-width:790px!important}.sr-alert .sr-mission-command{margin-top:15px;padding:12px 15px;border-radius:10px;background:#10230e;border:1px solid #638c38;max-width:770px}.sr-alert .sr-mission-command b{display:block;color:#bdf385;font-size:12px;letter-spacing:.07em;margin-bottom:6px}.sr-alert .sr-mission-command p{font-size:13px;color:#ecfce3;line-height:1.75;font-weight:650}.sr-alert .sr-diagnostic{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:6px;background:#82291c;border:1px solid #f38158;color:#fff5ed;font-size:10px;font-weight:950;letter-spacing:.08em;margin-top:9px}.sr-var-builder{margin-top:12px;border:1px solid #2e6438;background:linear-gradient(105deg,#0e2317,#0a190f);border-radius:12px;padding:13px 17px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}.sr-var-builder strong{display:block;font-size:13px;color:#c3f29a}.sr-var-builder p{font-size:11px;line-height:1.6;color:#a9c6a1;margin:4px 0 0}.sr-var-inputs{display:flex;align-items:center;flex-wrap:wrap;gap:7px}.sr-var-inputs input{min-width:170px;max-width:210px;height:39px;padding:7px 10px!important;border:1px solid #628b46!important;border-radius:7px;background:#0a130b!important;color:#eefce8!important;font-size:13px!important}.sr-var-success{font-size:12px;color:#bbf191;font-weight:850}.sr-var-warning{color:#ffccb2;font-size:11px;margin-top:5px}.sr-var-builder .sr-btn{white-space:nowrap}
+
+.sr-mission.sr-alert .sr-alert-title h3{font-size:clamp(23px,2.9vw,32px)!important}
+.sr-tool{cursor:grab!important;user-select:none;touch-action:none;min-height:45px!important}.sr-tool:before{content:'⠿'!important;font-size:18px;line-height:10px}.sr-tool:active,.sr-block-head:active{cursor:grabbing!important}
+.sr-block{overflow:visible!important;margin:0!important}.sr-block-head{cursor:grab;user-select:none;touch-action:pan-y}.sr-block-head select,.sr-block-head button{cursor:pointer;touch-action:auto}.sr-grip{font-size:22px;line-height:1;color:#ffffffae;flex:none;padding:0 2px}.sr-del{flex:none;background:#10180a55!important;border:1px solid #ffffff59!important;color:#fff!important;border-radius:6px;padding:2px 8px;font-size:17px!important;min-width:28px}.sr-block-body{padding:4px 8px 7px 12px;min-height:25px}.sr-snap{height:14px;display:flex;align-items:center;justify-content:center;position:relative;border-radius:7px;border:1px dashed transparent;transition:background .09s,height .09s}.sr-snap span{opacity:0;color:#ccfa9d;font-size:10px;font-weight:800;pointer-events:none}.sr-snap.sr-empty{height:65px;border-color:#517343;background:#18331744}.sr-snap.sr-empty span{opacity:.9}.sr-snap.sr-priority{background:#263e1770;border-color:#c7e678}.sr-snap.sr-priority span{opacity:1;color:#e1f8b6}.sr-snap.sr-hot{height:25px!important;background:#3a6b30aa!important;border:2px dashed #d8ff95!important;box-shadow:0 0 18px #a2f65355}.sr-snap.sr-hot span{opacity:1!important}.sr-block.sr-dragging{opacity:.35}.sr-tool.sr-dragging{opacity:.45}.sr-work.sr-drag-active{border-color:#a8ea68;box-shadow:inset 0 0 0 1px #a8ea6866}.sr-work{height:clamp(360px,56vh,570px);overflow:auto!important;overscroll-behavior:contain}.sr-palette{position:sticky;top:8px;align-self:start;z-index:6;max-height:calc(100vh - 90px);overflow:auto}.sr-palette-note{font-size:11px!important;color:#c0d8b7!important}.sr-data-panel{display:flex;flex-wrap:wrap;gap:12px;padding:12px 14px;margin-top:11px;border:1px solid #405c32;background:#0b1c12;border-radius:11px}.sr-data-panel strong{font-size:11px;color:#b9ef91}.sr-data-panel code{display:block;margin-top:5px;white-space:normal;font-size:12px;color:#e7f8de}.sr-data-panel p{font-size:10px;color:#91ae8b;margin:3px 0 0}.sr-drag-hint{padding:8px 11px;border:1px solid #3e6c32;background:#132a13;border-radius:8px;margin-top:9px;color:#cafa9e;font-size:11px}.sr-snap-end{display:none}
+@media(max-width:950px){#sr-drawer{width:100vw;min-width:0}.sr-zone{grid-template-columns:135px minmax(0,1fr)}.sr-content{padding:13px}.sr-progress{padding:10px;gap:4px}.sr-stage{min-width:104px}.sr-top{padding:12px}.sr-top h2{font-size:18px}.sr-actions{flex-wrap:wrap;justify-content:end}.sr-report .sr-cols{grid-template-columns:1fr}}
+@media(max-width:560px){.sr-zone{grid-template-columns:1fr}.sr-tool{width:auto;display:inline-block;margin:4px}.sr-palette{padding:7px}.sr-stage{min-width:125px}.sr-block-content select{max-width:120px!important}.sr-block-head{align-items:start}.sr-content{padding:10px}.sr-mission h3{font-size:16px}}
+`;
+const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);
+function safeHasHost(){return !!(document.querySelector('#scene')&&typeof window.autoAlarmShouldFire==='function');}
+const hasHost=safeHasHost();
+const originalAuto=hasHost?window.autoAlarmShouldFire:null;
+const originalLogicUI=hasHost?window.updateLogicUI:null;
+if(hasHost && typeof originalLogicUI==='function')window.updateLogicUI=function(){
+ originalLogicUI.apply(this,arguments);
+ const summary=document.querySelector('#logicSummaryText');
+ if(summary&&state.active)summary.textContent='학생이 만든 블록 알고리즘 적용 중 · 경보 조건은 학생 코드로 결정됩니다.';
+ document.querySelectorAll('.logicChoice').forEach(el=>{el.disabled=!!state.active;el.title=state.active?'학생 알고리즘 적용 중에는 기본 경보 조건을 바꿀 수 없습니다.':''});
+};
+function currentRealInputs(step){
+ // Top-level let sensors and scenario in the original classic script are globally lexical,
+ // so they are readable by identifier from another classic script.
+ const active=typeof activeSensors==='function'?activeSensors():[];
+ if(!active.length)return null;
+ const readings=[],limits=[],ops=[];
+ for(const s of active){
+  if(!Number.isFinite(Number(s.rule.th)))return null;
+  readings.push(sensorValue(s,step));limits.push(Number(s.rule.th));ops.push(s.rule.op||'ge');
+ }
+ return {readings,limits,ops};
+}
+function realDecision(step){
+ if(!state.active)return originalAuto(step);
+ try{
+  const active=typeof activeSensors==='function'?activeSensors():[];
+  if(!active.length)return false;
+  const limits=active.map(s=>Number(s.rule.th));
+  const ops=active.map(s=>s.rule.op||'ge');
+  // Recompute from T+00 through this step. Side-effect free across UI redraws
+  // and different scenarios inside 100-run evaluation.
+  const series=[];
+  for(let t=0;t<=Math.max(0,Math.min(14,step));t++)series.push(active.map(s=>sensorValue(s,t)));
+  return simulate(state.work[4],series,limits,ops).alarm;
+ }catch(e){console.warn('학생 경보 코드 실행 오류',e);return false}
+}
+if(hasHost)window.autoAlarmShouldFire=realDecision;
+function injectLaunch(){
+ if($('#startScreen .startMenu')){
+  const btn=document.createElement('button');btn.id='sr-top-launch';btn.type='button';btn.textContent='🔧 SYSTEM REPAIR · 개발자 모드';btn.addEventListener('click',()=>openDev());
+  $('#startScreen .startMenu').after(btn);btn.style.marginTop='10px';
+ }
+ const b=document.createElement('button');b.id='sr-launch';b.type='button';b.textContent='⚙ SYSTEM REPAIR';b.addEventListener('click',()=>openDev());document.body.appendChild(b);
+}
+function mainMarkup(){return `<div id="sr-shade"></div><section id="sr-drawer" role="dialog" aria-modal="true" aria-label="네팔 홍수 시스템 복구 개발자 모드">
+ <div class="sr-top"><div><div class="sr-kicker">NEPAL FLOOD // CODING LAB</div><h2>⚙ SYSTEM REPAIR <small>v0.4</small></h2></div>
+ <div class="sr-actions"><button class="sr-btn" data-act="export">프로젝트 저장 ↓</button><button class="sr-btn" data-act="import">불러오기 ↑</button><button class="sr-btn sr-x" data-act="close" title="일반 모드로 돌아가기">✕</button></div></div>
+ <nav class="sr-progress" id="sr-progress"></nav>
+ <div class="sr-content"><section id="sr-mission"></section><div id="sr-data-panel" class="sr-data-panel"></div><div class="sr-drag-hint">✋ 왼쪽 블록을 잡아 끌어서 오른쪽 프로그램에 놓으세요. 초록색 연결 위치에 가까워지면 자석처럼 붙습니다.</div><div class="sr-zone"><div class="sr-palette"><div class="sr-pane-title">블록 도구 상자</div><div id="sr-tools"></div><div class="sr-palette-note">블록을 끌어오면 초록색으로 연결 위치가 표시됩니다.<br><br>이미 놓은 블록도 잡아 끌어서 순서를 바꾸거나 조건문·반복문 안으로 넣을 수 있습니다.</div></div>
+ <div class="sr-work"><div class="sr-pane-title">내가 만든 알고리즘 <span style="float:right;font-size:10px;color:#94b88b" id="sr-target-indicator">전체 프로그램</span></div><div id="sr-blocks"></div></div></div>
+ <div class="sr-statusbar"><div id="sr-status"></div></div>
+ <div class="sr-footer"><div style="display:flex;gap:7px;flex-wrap:wrap"><button class="sr-btn primary" data-act="test">▶ 시스템 검사 실행</button><button class="sr-btn" data-act="copy">4번 알고리즘 가져오기</button><button class="sr-btn warn" data-act="reset">현재 미션 초기화</button></div><div style="display:flex;gap:7px;flex-wrap:wrap"><button class="sr-btn" data-act="prev">← 이전</button><button class="sr-btn" data-act="next">다음 →</button></div></div>
+ <div class="sr-report"><div class="sr-pane-title">프로그램 개발 기록</div><div class="sr-cols"><div><label for="sr-team">반 / 조 / 이름</label><input id="sr-team" placeholder="예: 1-3 / 8조" autocomplete="off"></div><div><label for="sr-note">발생한 오류와 수정한 내용</label><textarea id="sr-note" placeholder="어떤 문제가 있었고 어떤 블록을 어떻게 수정했나요?"></textarea></div></div><div style="margin-top:9px;display:flex;gap:7px;justify-content:end"><button class="sr-btn" data-act="report">개발 보고서 저장 ↓</button><button class="sr-btn primary" data-act="deploy">🚨 원본 시뮬레이션에 연결하기</button></div><p class="sr-note" style="margin-top:8px">기본 시뮬레이션은 그대로 유지됩니다. 5단계 검사 성공 후 연결하면 학생 알고리즘으로 실제 경보가 발령됩니다. 실제 100회 형성평가는 원래 화면에서 실행하세요.</p></div>
+ </div><input type="file" id="sr-file" accept=".json,application/json" hidden></section>`}
+const root=document.createElement('div');root.id='sr-app';root.innerHTML=mainMarkup();document.body.appendChild(root);
+function openDev(){
+ root.classList.add('sr-show');$('#sr-launch').style.display='none';state.selected=null;
+ if(hasHost){try{if(typeof simRunning!=='undefined'&&simRunning){alert('실행 중인 시뮬레이션을 종료한 후 개발자 모드를 열어 주세요.');root.classList.remove('sr-show');$('#sr-launch').style.display='';return}}catch(_){}}
+ render();
+}
+function closeDev(){root.classList.remove('sr-show');$('#sr-launch').style.display='';}
+function render(){
+ $('#sr-progress').innerHTML=tasks.map((t,n)=>`<button type="button" class="sr-stage ${n===state.task?'current':''} ${state.passed[n]?'passed':''}" data-act="mission" data-id="${n}"><b>${state.passed[n]?'✓':String(n+1).padStart(2,'0')}</b><span>${esc(t.title)}</span><small>${esc(t.tag)}</small></button>`).join('');
+ const t=tasks[state.task];
+ $('#sr-mission').innerHTML=`<div class="sr-mission sr-alert"><div><div class="sr-label">MISSION ${String(state.task+1).padStart(2,'0')} / 05 · ${esc(t.tag)}</div><div class="sr-diagnostic">⚠ ${esc(t.diagnostic)}</div><div class="sr-alert-title"><span class="sr-alert-icon" aria-hidden="true">🚨</span><h3 class="sr-fault-heading">${esc(t.fault)}</h3></div><p class="sr-fault-body">${esc(t.desc)}</p><div class="sr-mission-command"><b>🛠 YOUR MISSION · 복구 임무</b><p>${esc(t.mission)}</p></div></div><div class="sr-mission-num">${String(state.task+1).padStart(2,'0')}</div></div>${state.task===0?`<div class="sr-var-builder"><div><strong>STEP 01 · 센서값을 기억할 변수 만들기</strong><p>변수 이름을 직접 입력하고 만든 다음, 블록으로 측정값을 저장하세요.</p></div>${state.customVars.includes('수위센서값')?'<div class="sr-var-success">✓ 「수위센서값」 변수 생성 완료</div>':`<div class="sr-var-inputs"><input id="sr-new-var" maxlength="20" placeholder="예: 수위센서값" aria-label="새 변수 이름"><button class="sr-btn primary" data-act="create-var">＋ 변수 만들기</button></div>`}</div>`:state.task===1?`<div class="sr-var-builder"><div><strong>STEP 02 · 센서값을 순서대로 담을 리스트 만들기</strong><p>리스트는 여러 값을 순서대로 보관하는 저장 공간입니다. 먼저 「센서값목록」을 만든 뒤 값을 추가하세요.</p></div>${state.customLists.includes('센서값목록')?'<div class="sr-var-success">✓ 「센서값목록」 리스트 생성 완료</div>':`<div class="sr-var-inputs"><input id="sr-new-list" maxlength="20" placeholder="예: 센서값목록" aria-label="새 리스트 이름"><button class="sr-btn primary" data-act="create-list">＋ 리스트 만들기</button></div>`}</div>`:''}`;
+ const demo=state.task===0?case1[0]:state.task===1?case2[1]:state.task===2?case3[2]:case4[2];
+ let savedM1=null,savedM2=[];
+ try{if(state.task===0&&state.customVars.includes('수위센서값')&&all(state.work[0],n=>n.type==='set'&&n.target==='수위센서값'))savedM1=simulate(state.work[0],demo.series,demo.limits,[]).vars['수위센서값'];if(state.task===1&&state.customLists.includes('센서값목록'))savedM2=simulate(state.work[1],demo.series,demo.limits,[]).lists['센서값목록']||[]}catch(_){}
+ $('#sr-data-panel').innerHTML=state.task===0?`<div><strong>💧 수위 센서 현재 측정값</strong><code>${demo.series[0][0]} m · 센서가 지금 측정한 값</code></div><div><strong>🧠 여러분이 만들 저장 공간</strong><code>${state.customVars.includes('수위센서값')?(savedM1===null?'「수위센서값」 생성 완료 · 블록으로 측정값을 저장하세요.':'수위센서값 = '+savedM1):'아직 변수가 없습니다.'}</code></div>`:state.task===1?`<div><strong>💧 수위 센서</strong><code>${demo.series[0][0]} m</code></div><div><strong>🌊 유속 센서</strong><code>${demo.series[0][1]} m/s</code></div><div><strong>📳 진동 센서</strong><code>${demo.series[0][2]} · 측정값</code></div><div><strong>📋 센서값목록</strong><code>${state.customLists.includes('센서값목록')?'['+savedM2.join(', ')+'] · 저장된 값 '+savedM2.length+'개':'미생성 · 순서대로 값을 담아 보세요.'}</code></div>`:`<div><strong>📋 센서값목록 <span style="font-size:10px">(미션 시험 예시)</span></strong><code>[${demo.series[0].join(', ')}] · 센서별 현재 측정값</code></div><div><strong>📏 위험기준목록</strong><code>[${demo.limits.join(', ')}] · 센서별 위험 기준</code></div><div><strong>🔁 반복번호 (1부터 시작)</strong><code>1번째 → 2번째 → 3번째 … · 리스트 크기만큼 검사</code></div>`;
+ const available=state.task===0?(state.customVars.includes('수위센서값')?['set']:[]):state.task===1?(state.customLists.includes('센서값목록')?['append']:[]):state.task===2?['set','add','if','loop']:['set','add','if','loop','alarm'];
+ $('#sr-tools').innerHTML=types.filter(x=>available.includes(x[0])).map(([type,title,color])=>`<button type="button" class="sr-tool sr-${color}" draggable="true" data-drag-type="${type}" data-type="${type}" title="끌어서 블록을 연결하세요">${title}</button>`).join('')||'<p class="sr-palette-note">먼저 위에서 변수 또는 리스트를 생성하세요.</p>';
+ $('#sr-blocks').innerHTML=blocksHtml(state.work[state.task]);
+ $('#sr-target-indicator').textContent='블록을 끌어서 결합';
+ const result=state.grades[state.task];
+ $('#sr-status').innerHTML=`<h4>${state.passed[state.task]?'<span class="sr-good">✓ 모듈 복구 완료</span>':'⚠ 시스템 검사 대기'}</h4><p>${esc(t.target)}</p>${result?`<div class="sr-testlist ${result.success?'sr-good':'sr-bad'}">${result.success?'모든 검사 통과 · ':''}${result.passed}/${result.total} 테스트 성공${result.structure?'':'\n필수 블록이나 변수·리스트 만들기 단계가 완료되지 않았습니다.'}${result.errors.length?'\n'+esc(result.errors.slice(0,3).join('\n')):''}</div>`:`<p>도움말: ${esc(t.tips)}</p>`}<div class="sr-progress-line"><div style="width:${state.passed.filter(Boolean).length*20}%"></div></div><p style="margin-top:7px">총 ${state.passed.filter(Boolean).length}/5 모듈 복구</p>`;
+ $('#sr-team').value=state.team;$('#sr-note').value=state.note;
+}
+let dragging=null,hotSlot=null;
+function clearSnap(){if(hotSlot)hotSlot.classList.remove('sr-hot');hotSlot=null;root.querySelectorAll('.sr-dragging').forEach(el=>el.classList.remove('sr-dragging'));root.querySelector('.sr-work')?.classList.remove('sr-drag-active')}
+function containsNode(item,id){return item.id===id||(item.body||[]).some(n=>containsNode(n,id))}
+function findDestination(parent){if(parent==='root')return state.work[state.task];const target=findBlock(Number(parent));return target&&Array.isArray(target.item.body)?target.item.body:null}
+function attachAt(parent,index,item,moveId=null){
+ if(!item)return false;
+ if(moveId!==null){const old=findBlock(moveId);if(!old)return false;if(parent!=='root'&&containsNode(old.item,Number(parent)))return false}
+ let destination=findDestination(parent);if(!destination)return false;
+ if(moveId!==null){const source=findBlock(moveId);const prior=source.array,oldIdx=prior.indexOf(source.item);prior.splice(oldIdx,1);if(prior===destination&&oldIdx<index)index--;destination=findDestination(parent)}
+ if(!destination)return false;
+ destination.splice(Math.max(0,Math.min(index,destination.length)),0,item);return true;
+}
+function closestSnap(x,y){
+ const work=root.querySelector('.sr-work'),r=work.getBoundingClientRect();if(x<r.left-12||x>r.right+12||y<r.top-15||y>r.bottom+15)return null;
+ let best=null,score=Infinity;
+ root.querySelectorAll('.sr-snap').forEach(slot=>{
+  if(dragging&&dragging.id!==null&&slot.dataset.parent!=='root'){
+   const moving=findBlock(dragging.id);if(moving&&containsNode(moving.item,Number(slot.dataset.parent)))return;
+  }
+  const a=slot.getBoundingClientRect();if(!a.width)return;
+  const dx=Math.max(0,a.left-x,x-a.right),dy=Math.abs((a.top+a.bottom)/2-y);
+  const candidate=dy+dx*.65;
+  if(candidate<score){score=candidate;best=slot}
+ });return score<85?best:null;
+}
+function processDrop(slot){if(!dragging||!slot)return;
+ const parent=slot.dataset.parent,index=Number(slot.dataset.index);
+ const item=dragging.id===null?(state.task===0&&dragging.type==='set'?node('set',{target:'수위센서값'}):node(dragging.type)):findBlock(dragging.id)?.item;
+ if(attachAt(parent,index,item,dragging.id)){invalidate()}
+}
+root.addEventListener('dragstart',e=>{
+ if(e.target.closest('select,input,textarea,.sr-del')){e.preventDefault();return}
+ const palette=e.target.closest('[data-drag-type]'),block=e.target.closest('[data-drag-block]');if(!palette&&!block)return;
+ dragging=palette?{id:null,type:palette.dataset.dragType}:{id:Number(block.dataset.dragBlock),type:null};
+ e.dataTransfer.effectAllowed=palette?'copy':'move';e.dataTransfer.setData('text/plain','nepal-system-repair');
+ (palette||block).classList.add('sr-dragging');root.querySelector('.sr-work')?.classList.add('sr-drag-active');
+});
+root.addEventListener('dragover',e=>{
+ if(!dragging)return;
+ const slot=e.target.closest('.sr-snap')||closestSnap(e.clientX,e.clientY);if(!slot)return;
+ e.preventDefault();e.dataTransfer.dropEffect=dragging.id===null?'copy':'move';
+ if(slot!==hotSlot){if(hotSlot)hotSlot.classList.remove('sr-hot');hotSlot=slot;hotSlot.classList.add('sr-hot')}
+});
+root.addEventListener('drop',e=>{if(!dragging)return;e.preventDefault();const slot=e.target.closest('.sr-snap')||closestSnap(e.clientX,e.clientY)||hotSlot;processDrop(slot);dragging=null;clearSnap()});
+root.addEventListener('dragend',()=>{dragging=null;clearSnap()});
+// 키보드 접근성: 도구상자에서 Enter를 누르면 가장 아래에 추가
+root.addEventListener('keydown',e=>{const tool=e.target.closest('[data-drag-type]');if(tool&&(e.key==='Enter'||e.key===' ')){e.preventDefault();const type=tool.dataset.dragType;const item=state.task===0&&type==='set'?node('set',{target:'수위센서값'}):node(type);state.work[state.task].push(item);invalidate()}});
+function invalidate(){state.passed[state.task]=false;delete state.grades[state.task];if(state.task===4)state.active=false;persist();render();renderLive();}
+function duplicateProgram(data){return JSON.parse(JSON.stringify(data)).map(function renumber(n){n.id=nextId++;if(n.body)n.body=n.body.map(renumber);return n})}
+function test(){
+ const result=validateMission(state.task,state.work[state.task]);state.grades[state.task]=result;state.passed[state.task]=result.success;persist();render();
+ if(result.success && state.task===4){$('#sr-status').insertAdjacentHTML('beforeend','<p class="sr-good">실제 사이트의 센서와 경보 판단에 연결할 준비가 되었습니다.</p>')}
+}
+function renderLive(){
+ if(hasHost&&typeof window.updateLogicUI==='function')try{window.updateLogicUI()}catch(_){}
+ const existing=$('#sr-live');if(existing)existing.remove();
+ if(!hasHost||!state.active)return;
+ const badge=document.createElement('div');badge.id='sr-live';badge.innerHTML='⚙ 학생 경보 알고리즘 적용 중 <button type="button" id="sr-off">기본 경보로 복구</button>';
+ document.body.appendChild(badge);$('#sr-off').onclick=()=>{state.active=false;renderLive()};
+}
+function deploy(){
+ if(!state.passed[4]){alert('5단계 시스템 검사를 먼저 통과하세요.');return}
+ if(!hasHost){alert('현재는 독립 시험판입니다. 원본 nepal/index.html에 system_repair.js를 추가하면 실제 시뮬레이션과 연결할 수 있습니다.');return}
+ let valid=false;
+ try{valid=typeof activeSensors==='function'&&activeSensors().length>0}catch(_){}
+ if(!valid){alert('먼저 일반 모드에서 센서를 설치하고 위험 기준을 설정하세요. 프로그램 복구 상태는 저장되어 있습니다.');closeDev();return}
+ try{
+  if(typeof simRunning!=='undefined'&&simRunning){alert('실행 중인 시뮬레이션을 종료한 뒤 연결하세요.');return}
+  if(typeof alarmMode!=='undefined')alarmMode='OR';
+  if(typeof updateLogicUI==='function')updateLogicUI();
+ }catch(_){}
+ state.active=true;renderLive();closeDev();
+ alert('학생 알고리즘이 연결되었습니다. 이제 「시뮬레이션 시작」 또는 「100회 형성평가」를 실행하세요. 기존 경보 모드는 학생 알고리즘으로 대체됩니다.');
+}
+function download(name,content,mime){const blob=new Blob([content],{type:mime});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1200)}
+function exportProject(){download('NEPAL_SYSTEM_REPAIR_'+(state.team.replace(/[^가-힣0-9A-Za-z-]/g,'_')||'project')+'.json',JSON.stringify({format:'nepal_repair_v1',team:state.team,note:state.note,work:state.work,passed:state.passed,grades:state.grades,customVars:state.customVars,customLists:state.customLists},null,2),'application/json')}
+function exportReport(){
+ const flat=(arr,depth=0)=>arr.map(n=>`${'　'.repeat(depth)}- ${n.type}${n.type==='set'||n.type==='add'?' ('+n.target+' / '+n.value+')':n.type==='if'?' ('+n.left+' '+n.op+' '+n.right+')':''}\n${n.body?flat(n.body,depth+1):''}`).join('');
+ const text=`NEPAL FLOOD / SYSTEM REPAIR 개발 보고서\n\n반·조·이름: ${state.team||'(미기입)'}\n\n성공 미션: ${state.passed.filter(Boolean).length}/5\n\n발견한 오류와 수정 과정:\n${state.note||'(미기입)'}\n\n미션별 테스트 기록:\n${tasks.map((t,n)=>`${n+1}. ${t.title}: ${state.passed[n]?'통과':'미통과'} (${state.grades[n]?.passed||0}/${state.grades[n]?.total||'미실시'})\n${flat(state.work[n])}`).join('\n')}\n\n※ 게임 점수와 수행평가 점수는 별개입니다. 교사는 설계·작동·개선 과정을 확인하세요.`;
+ download('NEPAL_개발보고서.txt',text,'text/plain;charset=utf-8')
+}
+function isValidNode(n,depth=0){if(!n||depth>12||(!types.some(t=>t[0]===n.type)&&n.type!=='remember'))return false;if(n.body)return Array.isArray(n.body)&&n.body.length<300&&n.body.every(c=>isValidNode(c,depth+1));return true}
+function importProject(file){const reader=new FileReader();reader.onload=()=>{
+ try{const data=JSON.parse(reader.result);if(data.format!=='nepal_repair_v1'||!Array.isArray(data.work)||data.work.length!==5||!data.work.every(nodes=>Array.isArray(nodes)&&nodes.length<300&&nodes.every(n=>isValidNode(n))))throw Error('올바른 프로젝트 파일이 아닙니다.');
+  state.work=data.work.map(duplicateProgram);if(state.work.some(nodes=>all(nodes,n=>n.type==='remember'))){state.work[3]=template(3);state.work[4]=template(4)}state.customVars=Array.isArray(data.customVars)?data.customVars.filter(v=>typeof v==='string'&&/^[가-힣A-Za-z_][가-힣A-Za-z0-9_]{0,19}$/.test(v)).slice(0,30):[];state.customLists=Array.isArray(data.customLists)?data.customLists.filter(v=>v==='센서값목록'):[];state.passed=[false,false,false,false,false];state.grades={};state.team=String(data.team||'').slice(0,100);state.note=String(data.note||'').slice(0,4000);state.active=false;persist();render();renderLive();alert('프로젝트를 불러왔습니다. 각 미션을 다시 검사해 주세요.');
+ }catch(e){alert('불러오기 실패: '+e.message)}
+ };reader.readAsText(file)}
+root.addEventListener('change',e=>{
+ if(e.target.matches('[data-node][data-key]')){
+  const n=findBlock(Number(e.target.dataset.node));if(!n)return;n.item[e.target.dataset.key]=e.target.value;invalidate();
+ }
+ if(e.target.id==='sr-team'){state.team=e.target.value;persist()}
+ if(e.target.id==='sr-note'){state.note=e.target.value;persist()}
+ if(e.target.id==='sr-file'&&e.target.files[0]){importProject(e.target.files[0]);e.target.value=''}
+});
+root.addEventListener('input',e=>{if(e.target.id==='sr-team')state.team=e.target.value;if(e.target.id==='sr-note')state.note=e.target.value;persist()});
+root.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='sr-new-var'){e.preventDefault();$('#sr-mission [data-act="create-var"]')?.click()}if(e.key==='Enter'&&e.target.id==='sr-new-list'){e.preventDefault();$('#sr-mission [data-act="create-list"]')?.click()}});
+root.addEventListener('click',e=>{
+ const b=e.target.closest('[data-act]');if(!b)return;
+ const act=b.dataset.act,id=Number(b.dataset.id);
+ if(act==='close')return closeDev();
+ if(act==='mission'){state.task=id;state.selected=null;return render()}
+ if(act==='create-var'){
+  const input=$('#sr-new-var');if(!input)return;
+  const name=input.value.trim();
+  if(!/^[가-힣A-Za-z_][가-힣A-Za-z0-9_]{0,19}$/.test(name)){alert('변수 이름은 한글·영문·숫자·밑줄(_)로 1~20자 이내로 입력하세요. 첫 글자는 숫자가 아니어야 합니다.');return}
+  if(state.task===0&&name!=='수위센서값'){alert('이번 미션에서는 변수 이름을 「수위센서값」으로 정확히 입력하세요.');return}
+  if(allVariableNames().includes(name)){alert('이미 있는 변수 이름입니다.');return}
+  state.customVars.push(name);persist();return invalidate();
+ }
+ if(act==='create-list'){
+  const input=$('#sr-new-list');if(!input)return;
+  if(input.value.trim()!=='센서값목록'){alert('이번 미션에서는 리스트의 이름을 「센서값목록」으로 정확하게 만들어 주세요.');return}
+  if(!state.customLists.includes('센서값목록'))state.customLists.push('센서값목록');
+  return invalidate();
+ }
+ if(act==='remove'){
+  const found=findBlock(id);if(!found)return;found.array.splice(found.array.indexOf(found.item),1);return invalidate();
+ }
+ if(act==='test')return test();
+ if(act==='next'){state.task=Math.min(4,state.task+1);state.selected=null;return render()}
+ if(act==='prev'){state.task=Math.max(0,state.task-1);state.selected=null;return render()}
+ if(act==='copy'){if(state.task!==4){alert('5번 전체 시스템 통합 미션에서 사용하세요.');return}if(!confirm('현재 5번 알고리즘을 4번 알고리즘으로 교체할까요?'))return;state.work[4]=duplicateProgram(state.work[3]);return invalidate()}
+ if(act==='reset'){if(!confirm('현재 미션의 블록과 생성한 변수/리스트를 초기 상태로 되돌릴까요?'))return;state.work[state.task]=template(state.task);if(state.task===0)state.customVars=state.customVars.filter(n=>n!=='수위센서값');if(state.task===1)state.customLists=state.customLists.filter(n=>n!=='센서값목록');state.selected=null;return invalidate()}
+ if(act==='deploy')return deploy();
+ if(act==='export')return exportProject();
+ if(act==='report')return exportReport();
+ if(act==='import')return $('#sr-file').click();
+});
+$('#sr-shade').addEventListener('click',closeDev);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&root.classList.contains('sr-show'))closeDev()});
+injectLaunch();renderLive();
+window.NepalSystemRepair={open:openDev,close:closeDev,simulate,validateMission,getState:()=>state};
+})();
+
+</script>
+</body></html>
